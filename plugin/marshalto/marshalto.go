@@ -149,6 +149,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/edwingeng/protobuf-alt/watcher"
 	"github.com/gogo/protobuf/gogoproto"
 	"github.com/gogo/protobuf/proto"
 	descriptor "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
@@ -332,6 +333,8 @@ func (this orderFields) Swap(i, j int) {
 
 func (p *marshalto) generateField(proto3 bool, numGen NumGen, file *generator.FileDescriptor, message *generator.Descriptor, field *descriptor.FieldDescriptorProto) {
 	fieldname := p.GetOneOfFieldName(message, field)
+	deferFunc := watcher.PrintFieldEnvelope(p.Generator, fieldname)
+	defer deferFunc()
 	nullable := gogoproto.IsNullable(field)
 	repeated := field.IsRepeated()
 	required := field.IsRequired()

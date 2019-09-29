@@ -179,6 +179,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/edwingeng/protobuf-alt/watcher"
 	"github.com/gogo/protobuf/gogoproto"
 	"github.com/gogo/protobuf/proto"
 	descriptor "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
@@ -500,6 +501,8 @@ func (p *unmarshal) noStarOrSliceType(msg *generator.Descriptor, field *descript
 }
 
 func (p *unmarshal) field(file *generator.FileDescriptor, msg *generator.Descriptor, field *descriptor.FieldDescriptorProto, fieldname string, proto3 bool) {
+	deferFunc := watcher.PrintFieldEnvelope(p.Generator, fieldname)
+	defer deferFunc()
 	repeated := field.IsRepeated()
 	nullable := gogoproto.IsNullable(field)
 	typ := p.noStarOrSliceType(msg, field)

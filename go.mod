@@ -1,6 +1,5 @@
-module github.com/gogo/protobuf
+module github.com/edwingeng/protobuf-alt
 
-require (
-	github.com/kisielk/errcheck v1.2.0 // indirect
-	github.com/kisielk/gotool v1.0.0 // indirect
-)
+go 1.13
+
+require github.com/gogo/protobuf v1.3.0
