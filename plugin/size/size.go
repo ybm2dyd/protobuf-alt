@@ -233,7 +233,7 @@ func (p *size) std(field *descriptor.FieldDescriptorProto, name string) (string,
 
 func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, message *generator.Descriptor, field *descriptor.FieldDescriptorProto, sizeName string) {
 	fieldname := p.GetOneOfFieldName(message, field)
-	deferFunc := watcher.PrintFieldEnvelope(p.Generator, fieldname)
+	deferFunc := watcher.PrintFieldEnvelope(p.Generator, *message.Name, fieldname)
 	defer deferFunc()
 	nullable := gogoproto.IsNullable(field)
 	repeated := field.IsRepeated()

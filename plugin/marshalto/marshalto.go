@@ -333,7 +333,7 @@ func (this orderFields) Swap(i, j int) {
 
 func (p *marshalto) generateField(proto3 bool, numGen NumGen, file *generator.FileDescriptor, message *generator.Descriptor, field *descriptor.FieldDescriptorProto) {
 	fieldname := p.GetOneOfFieldName(message, field)
-	deferFunc := watcher.PrintFieldEnvelope(p.Generator, fieldname)
+	deferFunc := watcher.PrintFieldEnvelope(p.Generator, *message.Name, fieldname)
 	defer deferFunc()
 	nullable := gogoproto.IsNullable(field)
 	repeated := field.IsRepeated()

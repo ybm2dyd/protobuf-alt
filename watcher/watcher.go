@@ -18,12 +18,12 @@ func init() {
 	}
 }
 
-func PrintFieldEnvelope(g *generator.Generator, fieldName string) func() {
+func PrintFieldEnvelope(g *generator.Generator, messageName, fieldName string) func() {
 	if !fieldEnvelope {
 		return func() {}
 	}
 
-	g.P(`{ // FE: `, fieldName)
+	g.P(`{ // FE - `, messageName, ":", fieldName)
 	g.In()
 	return func() {
 		g.P(`}`)

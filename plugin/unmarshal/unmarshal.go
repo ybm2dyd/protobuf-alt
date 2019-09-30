@@ -501,7 +501,7 @@ func (p *unmarshal) noStarOrSliceType(msg *generator.Descriptor, field *descript
 }
 
 func (p *unmarshal) field(file *generator.FileDescriptor, msg *generator.Descriptor, field *descriptor.FieldDescriptorProto, fieldname string, proto3 bool) {
-	deferFunc := watcher.PrintFieldEnvelope(p.Generator, fieldname)
+	deferFunc := watcher.PrintFieldEnvelope(p.Generator, *msg.Name, fieldname)
 	defer deferFunc()
 	repeated := field.IsRepeated()
 	nullable := gogoproto.IsNullable(field)
