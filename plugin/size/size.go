@@ -433,7 +433,7 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 						p.P(`if v != nil {`)
 						p.In()
 					}
-					p.P(`l = v.`, sizeName, `()`)
+					p.P(`l = v.`, watcher.FuncInvocationOfSize(sizeName))
 					p.P(`l += `, strconv.Itoa(valueKeySize), ` + sov`+p.localName+`(uint64(l))`)
 					if nullable {
 						p.Out()
@@ -466,9 +466,9 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 					if stdOk {
 						p.P(`l = `, stdSizeCall)
 					} else if valuegoTyp != valuegoAliasTyp {
-						p.P(`l = ((`, valuegoTyp, `)(v)).`, sizeName, `()`)
+						p.P(`l = ((`, valuegoTyp, `)(v)).`, watcher.FuncInvocationOfSize(sizeName))
 					} else {
-						p.P(`l = v.`, sizeName, `()`)
+						p.P(`l = v.`, watcher.FuncInvocationOfSize(sizeName))
 					}
 					p.P(`l += `, strconv.Itoa(valueKeySize), ` + sov`+p.localName+`(uint64(l))`)
 					p.Out()
@@ -478,9 +478,9 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 					if stdOk {
 						p.P(`l = `, stdSizeCall)
 					} else if valuegoTyp != valuegoAliasTyp {
-						p.P(`l = ((*`, valuegoTyp, `)(&v)).`, sizeName, `()`)
+						p.P(`l = ((*`, valuegoTyp, `)(&v)).`, watcher.FuncInvocationOfSize(sizeName))
 					} else {
-						p.P(`l = v.`, sizeName, `()`)
+						p.P(`l = v.`, watcher.FuncInvocationOfSize(sizeName))
 					}
 					sum = append(sum, strconv.Itoa(valueKeySize))
 					sum = append(sum, `l+sov`+p.localName+`(uint64(l))`)
@@ -497,7 +497,7 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 			if stdOk {
 				p.P(`l=`, stdSizeCall)
 			} else {
-				p.P(`l=e.`, sizeName, `()`)
+				p.P(`l=e.`, watcher.FuncInvocationOfSize(sizeName))
 			}
 			p.P(`n+=`, strconv.Itoa(key), `+l+sov`, p.localName, `(uint64(l))`)
 			p.Out()
@@ -507,7 +507,7 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 			if stdOk {
 				p.P(`l=`, stdSizeCall)
 			} else {
-				p.P(`l=m.`, fieldname, `.`, sizeName, `()`)
+				p.P(`l=m.`, fieldname, `.`, watcher.FuncInvocationOfSize(sizeName))
 			}
 			p.P(`n+=`, strconv.Itoa(key), `+l+sov`, p.localName, `(uint64(l))`)
 		}
@@ -535,12 +535,12 @@ func (p *size) generateField(proto3 bool, file *generator.FileDescriptor, messag
 			if repeated {
 				p.P(`for _, e := range m.`, fieldname, ` { `)
 				p.In()
-				p.P(`l=e.`, sizeName, `()`)
+				p.P(`l=e.`, watcher.FuncInvocationOfSize(sizeName))
 				p.P(`n+=`, strconv.Itoa(key), `+l+sov`, p.localName, `(uint64(l))`)
 				p.Out()
 				p.P(`}`)
 			} else {
-				p.P(`l=m.`, fieldname, `.`, sizeName, `()`)
+				p.P(`l=m.`, fieldname, `.`, watcher.FuncInvocationOfSize(sizeName))
 				p.P(`n+=`, strconv.Itoa(key), `+l+sov`, p.localName, `(uint64(l))`)
 			}
 		}
@@ -608,7 +608,7 @@ func (p *size) Generate(file *generator.FileDescriptor) {
 		}
 		p.atleastOne = true
 		ccTypeName := generator.CamelCaseSlice(message.TypeName())
-		p.P(`func (m *`, ccTypeName, `) `, sizeName, `() (n int) {`)
+		watcher.PrintFuncSignatureOfSize(p.Generator, ccTypeName, sizeName)
 		p.In()
 		p.P(`if m == nil {`)
 		p.In()
@@ -632,7 +632,7 @@ func (p *size) Generate(file *generator.FileDescriptor) {
 				}
 				p.P(`if m.`, fieldname, ` != nil {`)
 				p.In()
-				p.P(`n+=m.`, fieldname, `.`, sizeName, `()`)
+				p.P(`n+=m.`, fieldname, `.`, watcher.FuncInvocationOfSize(sizeName))
 				p.Out()
 				p.P(`}`)
 			}
@@ -668,7 +668,7 @@ func (p *size) Generate(file *generator.FileDescriptor) {
 				continue
 			}
 			ccTypeName := p.OneOfTypeName(message, f)
-			p.P(`func (m *`, ccTypeName, `) `, sizeName, `() (n int) {`)
+			watcher.PrintFuncSignatureOfSize(p.Generator, ccTypeName, sizeName)
 			p.In()
 			p.P(`if m == nil {`)
 			p.In()

@@ -914,7 +914,7 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 		}
 		p.atleastOne = true
 
-		p.P(`func (m *`, ccTypeName, `) Marshal() (dAtA []byte, err error) {`)
+		watcher.PrintFuncSignatureOfMarshal(p.Generator, ccTypeName)
 		p.In()
 		if gogoproto.IsProtoSizer(file.FileDescriptorProto, message.DescriptorProto) {
 			p.P(`size := m.ProtoSize()`)
@@ -922,7 +922,7 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 			p.P(`size := m.Size()`)
 		}
 		p.P(`dAtA = make([]byte, size)`)
-		p.P(`n, err := m.MarshalToSizedBuffer(dAtA[:size])`)
+		p.P(`n, err := m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:size]`))
 		p.P(`if err != nil {`)
 		p.In()
 		p.P(`return nil, err`)
@@ -932,18 +932,18 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 		p.Out()
 		p.P(`}`)
 		p.P(``)
-		p.P(`func (m *`, ccTypeName, `) MarshalTo(dAtA []byte) (int, error) {`)
+		watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalTo")
 		p.In()
 		if gogoproto.IsProtoSizer(file.FileDescriptorProto, message.DescriptorProto) {
 			p.P(`size := m.ProtoSize()`)
 		} else {
 			p.P(`size := m.Size()`)
 		}
-		p.P(`return m.MarshalToSizedBuffer(dAtA[:size])`)
+		p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:size]`))
 		p.Out()
 		p.P(`}`)
 		p.P(``)
-		p.P(`func (m *`, ccTypeName, `) MarshalToSizedBuffer(dAtA []byte) (int, error) {`)
+		watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalToSizedBuffer")
 		p.In()
 		p.P(`i := len(dAtA)`)
 		p.P(`_ = i`)
@@ -1011,13 +1011,13 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 				continue
 			}
 			ccTypeName := p.OneOfTypeName(message, field)
-			p.P(`func (m *`, ccTypeName, `) MarshalTo(dAtA []byte) (int, error) {`)
+			watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalTo")
 			p.In()
-			p.P(`return m.MarshalToSizedBuffer(dAtA[:m.Size()])`)
+			p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:m.Size()]`))
 			p.Out()
 			p.P(`}`)
 			p.P(``)
-			p.P(`func (m *`, ccTypeName, `) MarshalToSizedBuffer(dAtA []byte) (int, error) {`)
+			watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalToSizedBuffer")
 			p.In()
 			p.P(`i := len(dAtA)`)
 			vanity.TurnOffNullableForNativeTypes(field)
@@ -1098,7 +1098,7 @@ func (p *marshalto) marshalSizeOf(marshal, size, varName, num string) {
 func (p *marshalto) backward(varName string, varInt bool) {
 	p.P(`{`)
 	p.In()
-	p.P(`size, err := `, varName, `.MarshalToSizedBuffer(dAtA[:i])`)
+	p.P(`size, err := `, varName, `.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:i]`))
 	p.P(`if err != nil {`)
 	p.In()
 	p.P(`return 0, err`)
@@ -1121,7 +1121,7 @@ func (p *marshalto) forward(varName string, varInt, protoSizer bool) {
 		p.P(`size := `, varName, `.Size()`)
 	}
 	p.P(`i -= size`)
-	p.P(`if _, err := `, varName, `.MarshalTo(dAtA[i:]); err != nil {`)
+	p.P(`if _, err := `, varName, `.`, watcher.FuncInvocationOfMarshalTo(`MarshalTo`, `dAtA[i:]`), `; err != nil {`)
 	p.In()
 	p.P(`return 0, err`)
 	p.Out()
