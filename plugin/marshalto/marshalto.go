@@ -917,9 +917,9 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 		watcher.PrintFuncSignatureOfMarshal(p.Generator, ccTypeName)
 		p.In()
 		if gogoproto.IsProtoSizer(file.FileDescriptorProto, message.DescriptorProto) {
-			p.P(`size := m.ProtoSize()`)
+			p.P(`size := m.` + watcher.FuncInvocationOfSize("ProtoSize"))
 		} else {
-			p.P(`size := m.Size()`)
+			p.P(`size := m.` + watcher.FuncInvocationOfSize("Size"))
 		}
 		p.P(`dAtA = make([]byte, size)`)
 		p.P(`n, err := m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:size]`))
@@ -935,9 +935,9 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 		watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalTo")
 		p.In()
 		if gogoproto.IsProtoSizer(file.FileDescriptorProto, message.DescriptorProto) {
-			p.P(`size := m.ProtoSize()`)
+			p.P(`size := m.` + watcher.FuncInvocationOfSize("ProtoSize"))
 		} else {
-			p.P(`size := m.Size()`)
+			p.P(`size := m.` + watcher.FuncInvocationOfSize("Size"))
 		}
 		p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:size]`))
 		p.Out()
@@ -1013,7 +1013,7 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 			ccTypeName := p.OneOfTypeName(message, field)
 			watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalTo")
 			p.In()
-			p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:m.Size()]`))
+			p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:m.`+watcher.FuncInvocationOfSize("Size")+`]`))
 			p.Out()
 			p.P(`}`)
 			p.P(``)
@@ -1116,9 +1116,9 @@ func (p *marshalto) forward(varName string, varInt, protoSizer bool) {
 	p.P(`{`)
 	p.In()
 	if protoSizer {
-		p.P(`size := `, varName, `.ProtoSize()`)
+		p.P(`size := `, varName, `.`+watcher.FuncInvocationOfSize("ProtoSize"))
 	} else {
-		p.P(`size := `, varName, `.Size()`)
+		p.P(`size := `, varName, `.`+watcher.FuncInvocationOfSize("Size"))
 	}
 	p.P(`i -= size`)
 	p.P(`if _, err := `, varName, `.`, watcher.FuncInvocationOfMarshalTo(`MarshalTo`, `dAtA[i:]`), `; err != nil {`)
