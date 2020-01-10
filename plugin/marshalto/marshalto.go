@@ -1011,13 +1011,18 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 				continue
 			}
 			ccTypeName := p.OneOfTypeName(message, field)
-			watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalTo")
+			p.P(`func (m *`, ccTypeName, `) MarshalTo(dAtA []byte) (int, error) {`)
 			p.In()
-			p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:m.`+watcher.FuncInvocationOfSize("Size")+`]`))
+			if gogoproto.IsProtoSizer(file.FileDescriptorProto, message.DescriptorProto) {
+				p.P(`size := m.ProtoSize()`)
+			} else {
+				p.P(`size := m.` + watcher.FuncInvocationOfSize("Size"))
+			}
+			p.P(`return m.`, watcher.FuncInvocationOfMarshalTo(`MarshalToSizedBuffer`, `dAtA[:size])`))
 			p.Out()
 			p.P(`}`)
 			p.P(``)
-			watcher.PrintFuncSignatureOfMarshalTo(p.Generator, ccTypeName, "MarshalToSizedBuffer")
+			p.P(`func (m *`, ccTypeName, `) MarshalToSizedBuffer(dAtA []byte) (int, error) {`)
 			p.In()
 			p.P(`i := len(dAtA)`)
 			vanity.TurnOffNullableForNativeTypes(field)
