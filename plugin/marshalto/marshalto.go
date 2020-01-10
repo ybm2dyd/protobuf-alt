@@ -947,7 +947,7 @@ func (p *marshalto) Generate(file *generator.FileDescriptor) {
 		p.In()
 		p.P(`if m == nil {`)
 		p.In()
-		p.P(`m = &`, ccTypeName, "{}")
+		p.P(`return 0, nil`)
 		p.Out()
 		p.P("}")
 		p.P(`i := len(dAtA)`)
