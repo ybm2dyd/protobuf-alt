@@ -62,10 +62,10 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/edwingeng/protobuf-alt/protoc-gen-gogo/generator/internal/remap"
 	"github.com/gogo/protobuf/gogoproto"
 	"github.com/gogo/protobuf/proto"
 	descriptor "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
-	"github.com/gogo/protobuf/protoc-gen-gogo/generator/internal/remap"
 	plugin "github.com/gogo/protobuf/protoc-gen-gogo/plugin"
 )
 
